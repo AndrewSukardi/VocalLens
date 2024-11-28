@@ -4,9 +4,15 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_tts/flutter_tts.dart'; // Import flutter_tts
 import 'package:image/image.dart' as img;
+import 'dart:convert';
 
 void main() {
   runApp(const MyApp());
+}
+
+void printWrapped(String text) {
+  final pattern = new RegExp('.{1,800}'); // 800 is the size of each chunk
+  pattern.allMatches(text).forEach((match) => print(match.group(0)));
 }
 
 class MyApp extends StatelessWidget {
@@ -164,6 +170,11 @@ class _CameraPermissionScreenState extends State<CameraPermissionScreen> {
     final raw_image = await _controller!.takePicture();
     print('Photo taken: ${raw_image.path}');
 
+    // Convert the image to base64
+    final imageFile = File(raw_image.path);
+    final imageBytes = await imageFile.readAsBytes();
+    final base64Image = base64Encode(imageBytes); // Base64 encode the image
+    // Print the base64 encoded string
     // Tampilkan dialog preview dengan spinner sebelum resize dimulai
     setState(() {
       _isLoading = true; // Set loading status to true
